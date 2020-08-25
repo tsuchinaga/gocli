@@ -66,6 +66,7 @@ func (g *Gocli) Run() error {
 				return nil
 			}
 		}
+		fmt.Println()
 	}
 }
 
