@@ -24,22 +24,19 @@ func NewGocli() Gocli {
 	bs.Split(bufio.ScanLines)
 	cmd := NewCommand("", "")
 
-	return Gocli{Command: cmd, current: cmd, bs: bs}
+	return Gocli{Command: cmd, current: cmd, bs: bs, path: []string{""}}
 }
 
 type Gocli struct {
 	Command
 	current Command
+	path    []string
 	bs      *bufio.Scanner
 }
 
 func (g *Gocli) Run() error {
 	for {
-		if g.current.getCmd() == "" {
-			fmt.Print(">>> ")
-		} else {
-			fmt.Printf("%s >>> ", g.current.getCmd())
-		}
+		fmt.Printf("%s >>> ", strings.Join(g.path, "/"))
 		g.bs.Scan()
 		cmd := g.bs.Text()
 		c := g.current.getCommand(cmd)
@@ -48,19 +45,23 @@ func (g *Gocli) Run() error {
 			continue
 		}
 		g.current = c
+		g.path = append(g.path, g.current.getCmd())
 
 		if g.current.hasAction() {
 			switch g.current.run(g.bs) {
 			case AfterActionReturn:
 				if g.current.getParent() != nil && g.current.getCmd() != "" {
 					g.current = g.current.getParent()
+					g.path = g.path[:len(g.path)-1]
 				}
 			case AfterActionReturnTwice:
 				if g.current.getParent() != nil && g.current.getCmd() != "" {
 					g.current = g.current.getParent()
+					g.path = g.path[:len(g.path)-1]
 				}
 				if g.current.getParent() != nil && g.current.getCmd() != "" {
 					g.current = g.current.getParent()
+					g.path = g.path[:len(g.path)-1]
 				}
 			case AfterActionExit:
 				return nil
