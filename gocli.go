@@ -35,7 +35,11 @@ type Gocli struct {
 
 func (g *Gocli) Run() error {
 	for {
-		fmt.Print(">>> ")
+		if g.current.getCmd() == "" {
+			fmt.Print(">>> ")
+		} else {
+			fmt.Printf("%s >>> ", g.current.getCmd())
+		}
 		g.bs.Scan()
 		cmd := g.bs.Text()
 		c := g.current.getCommand(cmd)
