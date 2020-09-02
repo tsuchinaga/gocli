@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/signal"
 	"strings"
 )
 
@@ -12,12 +13,23 @@ var (
 	helpDescription         = "is this help message"
 	returnDescription       = "is return upper to menu"
 	exitDescription         = "is exit this cli"
+	interruptMessage        = "input exit"
 )
 
 func SetCommandNotExistsMessage(msg string) { commandNotExistsMessage = msg }
 func SetHelpDescription(msg string)         { helpDescription = msg }
 func SetReturnDescription(msg string)       { returnDescription = msg }
 func SetExitDescription(msg string)         { exitDescription = msg }
+func SetInterruptMessage(msg string)        { interruptMessage = msg }
+func ThroughInterrupt() {
+	go func() {
+		ch := make(chan os.Signal)
+		signal.Notify(ch, os.Interrupt)
+		for range ch {
+			fmt.Println(interruptMessage)
+		}
+	}()
+}
 
 func NewGocli() Gocli {
 	bs := bufio.NewScanner(os.Stdin)

@@ -12,6 +12,8 @@ func main() {
 	gocli.SetHelpDescription("今ひらいているヘルプ")
 	gocli.SetReturnDescription("ひとつ前に戻る")
 	gocli.SetExitDescription("コマンドの終了")
+	gocli.SetInterruptMessage("Ctrl + Cではなくexitで終了してください")
+	gocli.ThroughInterrupt()
 
 	cli := gocli.NewGocli()
 	cli.AddSubCommand(gocli.NewCommand("list", "一覧表示").SetAction(func(*bufio.Scanner) gocli.AfterAction {
