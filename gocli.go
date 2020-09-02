@@ -38,7 +38,7 @@ func (g *Gocli) Run() error {
 	for {
 		fmt.Printf("%s >>> ", strings.Join(g.path, "/"))
 		g.bs.Scan()
-		cmd := g.bs.Text()
+		cmd := strings.TrimSpace(g.bs.Text())
 		c := g.current.getCommand(cmd)
 		if c == nil {
 			fmt.Println(commandNotExistsMessage)
